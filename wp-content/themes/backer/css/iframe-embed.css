@@ -1,0 +1,125 @@
+body, html {
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	margin: 0;
+	padding: 0;
+}
+a {
+	text-decoration: none !important;
+}
+.id-embedwidget {
+	background: none repeat scroll 0 0 #fff;
+	padding: 12px;
+}
+.product-wrapper a {
+	display: block;
+	position: relative;
+}
+.product-wrapper a:after {
+	color: #fff;
+	content: "+";
+	font-size: 54px;
+	font-weight: 700;
+	left: 50%;
+	line-height: 14px;
+	margin: -3px 0 0 -14px;
+	position: absolute;
+	top: 50%;
+	opacity: 0;
+}
+.product-wrapper img {
+	vertical-align: bottom;
+}
+.product-wrapper a:hover {
+	background: #000;
+}
+.product-wrapper a:hover:after {
+	opacity: 1;
+}
+.product-wrapper a:hover img {
+	opacity: .2;
+}
+.id-product-title {
+	color: #1b1b1b;
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 22px;
+	margin: 16px 0 12px;
+}
+.id-product-description {
+	color: #949494;
+	font-size: 12px;
+	line-height: 16px;
+}
+.id-product-description p {
+	margin: 0;
+}
+.progress-wrapper {
+	background: none repeat scroll 0 0 #f2f2f2;
+	border-radius: 5px;
+	height: 22px;
+	margin: 12px 0;
+	padding: 4px 5px;
+	position: relative;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.id-progress-raised {
+	color: #777;
+	position: relative;
+	z-index: 2;
+}
+.progress-bar {
+	background: none repeat scroll 0 0 #ddd;
+	border-radius: 5px;
+	height: 100%;
+	left: 0;
+	position: absolute;
+	top: 0;
+	z-index: 1;
+}
+.id-product-proposed-end {
+	margin: -5px 0 8px;
+	color: #949494;
+}
+.id-progress-raised, .id-product-proposed-end {
+	font-size: 11px;
+	font-weight: 700;
+}
+.learn-more-btn {
+	display: block;
+}
+.main-btn {
+	background-color: #1b1b1b;
+	border-radius: 5px;
+	color: #fff;
+	display: inline-block;
+	font-size: 12px;
+	font-weight: 700;
+	height: 38px;
+	line-height: 12px;
+	padding: 13px 20px;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.main-btn:hover {
+	background: #999;
+}	
+#poweredbyID {
+	bottom: 0;
+	font-size: 11px;
+	line-height: 11px;
+	position: absolute;
+}
+#poweredbyID a {
+	color: #666;
+}
+#poweredbyID a:hover {
+	color: #000;
+}
+.product-wrapper a:after, .product-wrapper img, .main-btn, #poweredbyID a {
+	-moz-transition: 200ms linear all;
+	-webkit-transition: 200ms linear all;
+	transition: 200ms linear all;
+}

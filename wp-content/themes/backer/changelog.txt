@@ -1,0 +1,59 @@
+*** Backer Changelog ***
+
+20 November 2014 - Version 1.1
+
+	* Added WP 4.1 compatiblity
+	* Added changelog view in the backend
+	* Updated the Revolution Slider plugin to v4.6.5
+	* Fixed an issue with projects funded over 1000%
+
+12 November 2014 - Version 1.0.9
+
+	* Fixed an issue with ID v1.5.1 compatibility
+	* Fixed an issue with Stretch Goals v1.0.5 extension
+	* Fixed an issue with project dates in IDE dashboard
+
+4 November 2014 - Version 1.0.8
+
+	* Fixed another ID v1.0.5 compatibility issue
+
+29 October 2014 - Version 1.0.7
+
+	* Made theme compatible with ID v1.5.0
+	* Updated the Revolution Slider plugin to v4.6.2
+
+28 October 2014 - Version 1.0.6
+
+	* Fixed an issue in the IDE dashboard
+
+17 October 2014 - Version 1.0.5
+
+	* Fixed a bug with the trashing of multiple projects
+	* Fixed the section backgrounds not issue
+
+8 October 2014 - Version 1.0.4
+	
+	* Fixed an issue with the layout, caused by v1.0.3
+
+4 October 2014 - Version 1.0.3
+
+	* Added "fixed header" option
+	* Fixed some IE8 issues
+	* Fixed an issue with certain grids not working
+	* Fixed a bug in the child theme
+
+17 September 2014 - Version 1.0.2
+
+	* Added pagination option in the project grid shortcode
+	* Fixed the "reloading grid" issue
+
+13 September 2014 - Version 1.0.1
+
+	* Added support for featured images (from IgnitionDeck 1.4.3)
+	* Fixed retina support
+	* Fixed other mobile (responsive) styling issues
+	* Added PSD files to the package
+
+10 September 2014 - Version 1.0
+	
+	* First Release

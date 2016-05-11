@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+
+    <head>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+        <title>Krown Themes | Amazing &amp; Unique WordPress Themes</title>
+       
+        <meta type="description" content="Two professionals building incredibly awesome WordPress themes for all creative folks out there." />
+        <meta type="keywords" content="WordPress, themes, grid, huge, wowway, goodwork, better, shadow, koncept, backer, creative, Ruben Bristian, Mindaugas Budginas" />
+
+        <style type="text/css">
+
+        	html, body {
+        		width: 100%;
+        		height: 100%;
+        		margin: 0;
+        		padding: 0;
+        		border: 0;
+        		background: #fff;
+        		overflow: hidden;
+        	}
+        	#logo {
+        		width: 297px;
+        		height: 39px;
+        		position: absolute;
+        		top: 50%;
+        		left: 50%;
+        		margin-left: -150px;
+        		margin-top: -20px;
+        		z-index: 2;
+        	}
+        	#promo {
+        		width: 270px;
+        		height: 44px;
+        		position: absolute;
+        		bottom: 50px;
+        		left: 50%;
+        		margin-left: -135px;
+        		z-index: 2;
+        	}
+        	#back {
+        		width: 100%;
+        		height: auto;
+        		position: absolute;
+        		top: 0;
+        		bottom: auto;
+        		left: 0;
+        		background
+        	}
+
+        </style>
+
+    </head>
+
+    <body>
+
+    	<h1 id="logo"><img src="img/logo.png" alt="KrownThemes" /></h1>
+
+    	<h2 id="promo"><a href="http://themeforest.net/user/krownthemes?ref=krownthemes"><img src="img/text.png" alt="Coming Soon!" /></a></h2>
+
+    	<img id="back" src="img/back.jpg" alt="" />
+
+    </body>
+
+</html>
