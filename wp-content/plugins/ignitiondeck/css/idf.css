@@ -215,3 +215,8 @@
 }
 
 .ignitiondeck form .form-row.twothird, .ignitiondeck form .twothird { width: 65.66% !important;}
+
+.idf_stock_gallery .idf_stock_item {
+	width: 25%;
+	display: inline-block;
+}

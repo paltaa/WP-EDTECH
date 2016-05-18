@@ -24,4 +24,57 @@ function idc_license_type($valid) {
 			break;
 	}
 }
+
+function idf_idc_validate_key($key) {
+	$ch = curl_init('http://www.ignitiondeck.com/id/?action=md_validate_license&key='.$key);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    $response = curl_exec($ch);
+    if (!$response) {
+    	echo 'Curl error: '.curl_error($ch);
+    }
+    curl_close($ch);
+    $data = json_decode($response);
+    $valid = $data->valid;
+    if (isset($data->download_id)) {
+    	$download = $data->download_id;
+    }
+    else {
+    	$download = null;
+    }
+    return array('response' => $valid, 'download' => $download);
+}
+
+add_action('idc_license_update', 'idc_license_update');
+
+function idc_license_update($idc_license_key) {
+	$valid = 0;
+	$general = get_option('md_receipt_settings');
+	$general = maybe_unserialize($general);
+	$general['license_key'] = $idc_license_key;
+	update_option('md_receipt_settings', $general);
+	$validate = idf_idc_validate_key($idc_license_key);
+	if (isset($validate['response'])) {
+		if ($validate['response']) {
+			if (isset($validate['download'])) {
+				if ($validate['download'] == '29') {
+					$valid = 1;
+					if (!was_idc_licensed()) {
+						update_option('was_idc_licensed', $valid);
+					}
+				}
+			}
+		}
+	}
+	update_option('is_idc_licensed', $valid);
+	set_transient('is_idc_licensed', $valid);
+}
+
+add_action('schedule_twicedaily_idf_cron', 'idf_schedule_twicedaily_idc_cron');
+
+function idf_schedule_twicedaily_idc_cron() {
+	$general = get_option('md_receipt_settings');
+	$general = maybe_unserialize($general);
+	$idc_license_key = (isset($general['license_key']) ? $general['license_key'] : '');
+	idc_license_update($idc_license_key);
+}
 ?>

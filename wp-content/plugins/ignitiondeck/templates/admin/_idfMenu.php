@@ -1,8 +1,8 @@
 <div class="wrap idf ignitiondeck">
 	<div class="icon32" id="icon-idf"></div><h2 class="title"><?php _e('IgnitionDeck Framework', 'idf'); ?></h2>
 	<div class="help">
-		<a href="http://forums.ignitiondeck.com" alt="IgnitionDeck Support" title="IgnitionDeck Support" target="_blank"><button class="button button-large"><?php _e('Support', 'idf'); ?></button></a>
-		<a href="http://docs.ignitiondeck.com" alt="IgnitionDeck Documentation" title="IgnitionDeck Documentation" target="_blank"><button class="button button-large"><?php _e('Documentation', 'idf'); ?></button></a>
+		<a href="http://forums.ignitiondeck.com" alt="IgnitionDeck Support" title="IgnitionDeck Support" target="_blank"><button class="button button-large button-primary"><?php _e('Support', 'idf'); ?></button></a>
+		<a href="http://docs.ignitiondeck.com" alt="IgnitionDeck Documentation" title="IgnitionDeck Documentation" target="_blank"><button class="button button-large button-primary"><?php _e('Documentation', 'idf'); ?></button></a>
 	</div>
 	<div class="md-settings-container">
 		<div class="postbox-container" style="width:95%; margin-right: 5%">
@@ -23,7 +23,7 @@
 										<li><a href="<?php echo site_url('wp-admin/themes.php'); ?>"><?php _e('Activate Theme 500', 'idf'); ?></a> <?php _e(', if you wish to use it', 'idf'); ?></li>
 										<li><a href="<?php echo site_url('wp-admin/admin.php?page=ignitiondeck'); ?>"><?php _e('Configure IgnitionDeck Crowdfunding', 'idf'); ?></a>&nbsp;&nbsp;&nbsp;<a target="_blank" href="http://ignitiondeck.com/id/documentation/quickstart/"><i class="fa fa-file-text-o"></i></a></li>
 										<li><a href="<?php echo site_url('wp-admin/post-new.php?post_type=ignition_product'); ?>"><?php _e('Create your first project', 'idf'); ?></a>&nbsp;&nbsp;&nbsp;<a target="_blank" href="http://ignitiondeck.com/id/documentation/ignitiondeck-crowdfunding/create-a-project/"><i class="fa fa-file-text-o"></i></a></li>
-										<li>Ready to accept pledges? <a target="_blank" href="http://ignitiondeck.com/id/ignitiondeck-pricing/"><?php _e('Upgrade to a premium version of the plugins', 'idf'); ?></a> <?php _e('to activate a payment gateway.', 'idf'); ?></li>
+										<li><?php _e('Ready to accept pledges', 'idf'); ?>? <a target="_blank" href="http://ignitiondeck.com/id/ignitiondeck-pricing/"><?php _e('Upgrade to a premium version of the plugins', 'idf'); ?></a> <?php _e('to activate a payment gateway.', 'idf'); ?></li>
 										<li><?php _e('Use the commerce selector below to choose an eCommerce platform for use with IgnitionDeck Crowdfunding (IDCF)', 'idf'); ?></li>
 									</ol>
 									<button id="idf_reset_account" class="button button-secondary"><?php _e('Disconnect Account'); ?></button>
@@ -50,7 +50,7 @@
 											<?php } if (in_array('edd', $platforms) && idf_has_edd()) { ?>
 												<option value="edd" <?php echo (isset($platform) && $platform == 'edd' ? 'selected="selected"' : ''); ?>><?php _e('Easy Digital Downloads', 'idf'); ?></option>
 											<?php } ?>
-											<option value="legacy" <?php echo (isset($platform) && $platform == 'legacy' ? 'selected="selected"' : ''); ?>><?php _e('Legacy IgnitionDeck', 'idf'); ?></option>
+											<option value="legacy" selected="selected"><?php _e('Legacy IgnitionDeck', 'idf'); ?></option>
 										</select>
 									</p>
 								</div>
@@ -61,6 +61,34 @@
 							</br>
 						</div>
 					</div>
+					<?php if ($super && idf_has_idcf()) { ?>
+					<div class="postbox">
+						<h3 class="hndle"><span><?php _e('License Settings', 'idf'); ?></span></h3>
+						<div class="inside">
+							<form name="licenseSettings" action="" method="post">
+								<p><?php _e('Entering your <a href="http://ignitiondeck.com/id/documentation/ignitiondeck-crowdfunding/setup-ignitiondeck/ignitiondeck-license-keys/" target="_blank">license key</a> will enable automatic updates via the WordPress admin for the duration of your license period.', 'idf'); ?></p>
+								<ul>
+									<li>
+										<label for="idcf_license_key" class=""><i class="fa fa-key"></i> <?php _e('IDCF License Key', 'idf'); ?></label><br/>
+										<input type="text" name="idcf_license_key" id="idcf_license_key" value="<?php echo (isset($idcf_license_key) ? $idcf_license_key : ''); ?>"/>
+									</li>
+									<li>
+										<label for="idc_license_key" class=""><i class="fa fa-key"></i> <?php _e('IDC License Key', 'memberdeck'); ?></label><br/>
+										<input type="text" name="idc_license_key" id="idc_license_key" value="<?php echo (isset($idc_license_key) ? $idc_license_key : ''); ?>"/>
+									</li>
+									<li>
+										<button class="button button-primary"><?php _e('Validate', 'ignitiondeck'); ?></button>
+									</li>
+								</ul>
+							</form>
+							<div class="license_validation">
+								<p>
+									<?php echo ($is_pro || $is_basic || $is_idc_licensed ? '<i class="fa fa-check"></i>'.__(' License Valid for', 'ignitiondeck').$type_msg : 'You are using IgnitionDeck Basic.<br/><a href="http://ignitiondeck.com/id/ignitiondeck-pricing/?utm_source=licensepage&utm_medium=link&utm_campaign=freemium" target="_blank">Upgrade now</a> to receive support, commerce, and free updates for a year.'); ?>
+								</p>
+							</div>
+						</div>
+					</div>
+					<?php } ?>
 					<?php } if (!function_exists(is_id_basic()) || (function_exists('is_id_basic') && !is_id_basic())) { ?>
 					<div class="postbox">
 						<h3 class="hndle"><span><?php _e('Updates', 'idf'); ?></span></h3>

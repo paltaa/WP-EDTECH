@@ -1,9 +1,17 @@
 <?php
 /*
-This file is for general functions that modify the WordPress defaults
+This file is for general functions that modify or snag the WordPress defaults
 */
 
-add_action('pre_get_posts', 'idf_restrict_media_view');
+function idf_is_super() {
+	$super = current_user_can('administrator');
+	if (is_multisite()) {
+		$super = is_super_admin();
+	}
+	return $super;
+}
+
+//add_action('pre_get_posts', 'idf_restrict_media_view');
 
 function idf_restrict_media_view($query) {
 	if ($query->get('post_type') == 'attachment' && !current_user_can('manage_options') && is_admin()) {
@@ -11,8 +19,7 @@ function idf_restrict_media_view($query) {
 			if (is_multisite()) {
 				require (ABSPATH . WPINC . '/pluggable.php');
 			}
-			global $current_user;
-			get_currentuserinfo();
+			$current_user = wp_get_current_user();
 			$user_id = $current_user->ID;
 			if ($user_id > 0) {
 				$query->set('author', $user_id);
@@ -48,8 +55,7 @@ function idf_add_creator_upload_cap() {
 					if (is_multisite()) {
 						require (ABSPATH . WPINC . '/pluggable.php');
 					}
-					global $current_user;
-					get_currentuserinfo();
+					$current_user = wp_get_current_user();
 					$user_id = $current_user->ID;
 					$user = get_user_by('id', $user_id);
 					
@@ -98,9 +104,8 @@ function idf_add_media_buttons() {
 		if (is_multisite()) {
 			require (ABSPATH . WPINC . '/pluggable.php');
 		}
-		global $current_user;
 		$add_cap = false;
-		get_currentuserinfo();
+		$current_user = wp_get_current_user();
 		$user_id = $current_user->ID;
 		$user = get_user_by('id', $user_id);
 		$dash_settings = get_option('md_dash_settings');

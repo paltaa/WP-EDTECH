@@ -3,11 +3,10 @@ add_action('init', 'idf_set_roles');
 
 function idf_set_roles() {
 	global $crowdfunding;
-	global $current_user;
 	if (is_multisite()) {
 		require (ABSPATH . WPINC . '/pluggable.php');
 	}
-	get_currentuserinfo();
+	$current_user = wp_get_current_user();
 	$user_id = $current_user->ID;
 	$user = get_user_by('id', $user_id);
 	// setup general roles for product suite

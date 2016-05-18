@@ -7,9 +7,9 @@
 Plugin Name: IgnitionDeck Framework
 URI: http://IgnitionDeck.com
 Description: A crowdfunding and ecommerce for WordPress that helps you crowdfund, pre-order, and sell goods online.
-Version: 1.2.2
-Author: Virtuous Giant
-Author URI: http://VirtuousGiant.com
+Version: 1.2.3
+Author: IgnitionDeck
+Author URI: http://IgnitionDeck.com
 License: GPL2
 */
 
@@ -30,11 +30,34 @@ if (idf_platform() == 'idc') {
 if (in_array('ignitiondeck-crowdfunding/ignitiondeck.php', $active_plugins)) {
 	include_once 'idf-idcf.php';
 }
+//include_once 'idf-stock-browser.php';
 
 register_activation_hook(__FILE__, 'idf_activation');
 
 function idf_activation() {
-	$key_transfer = get_option('idf_key_transfer');
+	idf_init_set_defaults();
+	idf_init_transfer_key();
+	if (!defined(ID_DEV_MODE) || ID_DEV_MODE == false) {
+		idf_update_products();
+	}
+}
+
+function idf_init_set_defaults() {
+	$platform = idf_platform();
+	if (empty($platform)) {
+		update_option('idf_commerce_platform', 'idc');
+	}
+	$version_array = array(
+		'ignitiondeck-crowdfunding/ignitiondeck.php' => '1.5.10',
+		'idcommerce/idcommerce.php' => '1.6.5'
+	);
+	set_transient('idf_plugin_versions', $version_array);
+	set_site_transient('update_plugins', null);
+}
+
+function idf_init_transfer_key() {
+	delete_option('idf_key_transfer');
+	$key_transfer = get_option('idf_transfer_key');
 	if (!$key_transfer) {
 		$key_data = array(
 			'keys' => array(
@@ -59,10 +82,10 @@ function idf_activation() {
 		// Key transfer for IDC
 		$idc_gen = get_option('md_receipt_settings');
 		if (!empty($idc_gen)) {
-			$general = maybe_unserialize($idc_gen);
+			$idc_gen = maybe_unserialize($idc_gen);
 			$idc_key = (isset($idc_gen['license_key']) ? $idc_gen['license_key'] : '');
-			if (function_exists('idc_validate_key')) {
-				$idc_response = idc_validate_key($idc_key);
+			if (function_exists('idf_idc_validate_key')) {
+				$idc_response = idf_idc_validate_key($idc_key);
 				$idc_valid = is_idc_key_valid($idc_response);
 				if ($idc_valid) {
 					$key_data['types']['idc_type'] = idc_license_type();
@@ -72,14 +95,57 @@ function idf_activation() {
 		}
 		$license_type = idf_parse_license($key_data);
 		if ($license_type) {
-			do_action('idf_key_transfer');
+			do_action('idf_transfer_key');
 		}
 	}
 }
 
-add_action( 'init', 'idf_textdomain' );
+function idf_update_products() {
+	$idc_installed = false;
+	if (class_exists('ID_Member')) {
+		if (function_exists('is_idc_licensed') && function_exists('was_idc_licensed')) {
+			if (is_idc_licensed() || was_idc_licensed()) {
+				$idc_installed = true;
+				require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+				$idc_data = get_plugin_data(ABSPATH . 'wp-content/plugins/idcommerce/idcommerce.php');
+			}
+		}
+	}
+	$plugin_array = array(
+		'ignitiondeck-crowdfunding/ignitiondeck.php',
+		'idcommerce/idcommerce.php'
+	);
+	deactivate_plugins($plugin_array);
+	idf_idcf_delivery(true);
+	if ($idc_installed) {
+		do_action('idc_force_update');
+	}
+}
+
+//add_action( 'idc_force_update', 'idf_textdomain' );
 function idf_textdomain() {
+	// this function will automatically update IDC in the background
 	load_plugin_textdomain( 'idf', false, dirname( plugin_basename( __FILE__ ) ).'/languages/' );
+	require( ABSPATH . 'wp-content/plugins/idcommerce/idcommerce-update.php');
+	require( ABSPATH . 'wp-admin/includes/plugin.php' );
+	$idc_data = get_plugin_data(ABSPATH . '/wp-content/plugins/idcommerce/idcommerce.php');
+	if (!empty($idc_data)) {
+		$update_data = idc_update_info('basic_check', array('slug' => 'idcommerce/idcommerce.php', 'version' => $idc_data['Version']));
+		$response = unserialize($update_data['body']);
+		if (isset($response->package) && is_admin()) {
+			require( ABSPATH . 'wp-admin/update.php' );
+			require( ABSPATH . 'wp-admin/includes/file.php' );
+			require( ABSPATH . 'wp-admin/includes/misc.php' );
+			$plugin_args = array(
+				'plugin' => 'idcommerce/idcommerce.php',
+				'url' => admin_url().'update.php?action=upgrade-plugin&plugin='.urlencode('idcommerce/idcommerce.php'),
+				'title' => __('Update Plugin'),
+				'nonce' => 'upgrade-plugin_'.'idcommerce/idcommerce.php',
+			);
+			$upgrader = new Plugin_Upgrader(new Plugin_Upgrader_Skin($plugin_args));
+			//$upgrader->upgrade('idcommerce/idcommerce.php');
+		}
+	}
 }
 
 add_action('wp_enqueue_scripts', 'idf_lightbox');
@@ -94,6 +160,7 @@ function idf_lightbox() {
 	wp_register_style('magnific', plugins_url('lib/magnific/magnific.css', __FILE__));
 	wp_register_script('magnific', plugins_url('lib/magnific/magnific.js', __FILE__));
 	wp_register_style('idf', plugins_url('css/idf.css', __FILE__));
+	wp_register_script('idf-stock-browser', plugins_url('js/idf-stock-browser.js', __FILE__));
 	wp_enqueue_script('jquery');
 	if (idf_enable_checkout()) {
 		$checkout_url = '';
@@ -111,6 +178,10 @@ function idf_lightbox() {
 		wp_enqueue_style('idf');
 		wp_enqueue_script('idf');
 		wp_enqueue_script('magnific');
+		if ($platform == 'legacy') {
+			wp_register_script('idlegacy-js', plugins_url('js/id-legacy.js', __FILE__));
+			wp_enqueue_script('idlegacy-js');
+		}
 		wp_localize_script('idf', 'idf_platform', $platform);
 		// Let's set the ajax url
 		$idf_ajaxurl = site_url('/wp-admin/admin-ajax.php');
@@ -119,12 +190,17 @@ function idf_lightbox() {
 		if (isset($checkout_url)) {
 			wp_localize_script('idf', 'idf_checkout_url', $checkout_url);
 		}
-		wp_localize_script('idf', 'idf_version', (!empty($idf_data) ? $idf_data['Version'] : '0.0.0'));
+		if (isset($idf_data['Version'])) {
+			wp_localize_script('idf', 'idf_version', $idf_data['Version']);
+		}
 	}
 	else {
 		wp_enqueue_script('idf-lite');
-		wp_localize_script('idf-lite', 'idf_version', (isset($idf_data['Version']) ? $idf_data['Version'] : '0.0.0'));
+		if (isset($idf_data['Version'])) {
+			wp_localize_script('idf-lite', 'idf_version', $idf_data['Version']);
+		}
 	}
+	wp_enqueue_script('idf-stock-browser');
 }
 
 function idf_font_awesome() {

@@ -3,8 +3,8 @@ Contributors: virtuousgiant
 Donate link: http://IgnitionDeck.com
 Tags: crowdfunding, crowd, funding, ecommerce, commerce, marketplace, fundraising, donation
 Requires at least: 3.2
-Tested up to: 4.5
-Stable tag: 1.2.2
+Tested up to: 4.5.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,15 @@ Grab code snippets, child theming guides, and API information on our [developer 
 == Screenshots ==
 
 == Changelog ==
+
+= 1.2.3 =
+
+* Automatically update IDCF on installation, force plugin check, and pester for IDC update (if installed)
+* Port key handling from IDC and IDCF to IDF
+* Import lightbox handling from Legacy IDCF
+* Replace get_currentuserinfo() with wp_get_current_user()
+* Additional functions for purpose of validating whether IDC and IDCF are installed
+* Fix issue with super admin role checking in non-multisite mode
 
 = 1.2.2 =
 

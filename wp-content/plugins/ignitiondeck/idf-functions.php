@@ -1,14 +1,25 @@
 <?php
 function idf_platform() {
-	$platform = get_option('idf_commerce_platform', 'legacy');
+	$platform = get_option('idf_commerce_platform', 'idc');
 	return $platform;
 }
 
+// deprecated with Free IDC
 function idf_enable_checkout() {
+	// return true prior to deprecation
+	return true;
 	if (class_exists('ID_Project') && is_id_licensed()) {
 		return true;
 	}
 	return false;
+}
+
+function idf_has_idc() {
+	return class_exists('ID_Member');
+}
+
+function idf_has_idcf() {
+	return class_exists('ID_Project');
 }
 
 function idf_has_edd() {
@@ -21,9 +32,9 @@ function idf_has_edd() {
 
 function idf_platforms() {
 	$platforms = array();
-	if (!function_exists('is_id_licensed') || !is_id_licensed()) {
+	/*if (!function_exists('is_id_licensed') || !is_id_licensed()) {
 		return $platforms;
-	}
+	}*/
 	if (class_exists('ID_Member')) {
 		$platforms[] = 'idc';
 	}
@@ -36,9 +47,9 @@ function idf_platforms() {
 	return $platforms;
 }
 
-function idf_idcf_delivery() {
+function idf_idcf_delivery($update = false) {
 	$plugins_path = plugin_dir_path(dirname(__FILE__));
-	if (!file_exists($plugins_path.'ignitiondeck-crowdfunding')) {
+	if (!file_exists($plugins_path.'ignitiondeck-crowdfunding') || $update) {
 		$prefix = 'http';
 		if (is_ssl()) {
 			$prefix = 'https';
@@ -97,6 +108,21 @@ function idf_fh_delivery() {
 			}
 		}
 	}
+}
+
+function idf_get_file($url) {
+	// download and return a file using allowed protocols
+	if ( ini_get('allow_url_fopen') ) {
+		$file = file_get_contents($url);
+	} else {
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_HEADER, 0);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		$file = curl_exec($curl);
+		curl_close($curl);
+	}
+	return $file;
 }
 
 function rrmdir($dir) {

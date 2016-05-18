@@ -1,4 +1,11 @@
 <?php
+
+add_action('admin_init', 'idf_admin_init');
+
+function idf_admin_init() {
+	do_action('idf_notice_checks');
+}
+
 add_action('admin_menu', 'idf_admin_menus');
 
 function idf_admin_menus() {
@@ -21,6 +28,55 @@ function idf_main_menu() {
 	$platform = idf_platform();
 	$plugins_path = plugin_dir_path(dirname(__FILE__));
 	$platforms = idf_platforms();
+	$super = idf_is_super();
+	$active_products = array();
+	if (idf_has_idcf()) {
+		$idcf_license_key = get_option('id_license_key');
+		$is_pro = get_transient('is_id_pro');
+		$is_basic = get_transient('is_id_basic');
+		if (isset($_POST['idcf_license_key'])) {
+			$is_pro = 0;
+			$is_basic = 0;
+			$idcf_license_key = sanitize_text_field($_POST['idcf_license_key']);
+			do_action('idcf_license_update', $idcf_license_key);
+			$is_pro = get_transient('is_id_pro');
+			$is_basic = get_transient('is_id_basic');
+		}
+		if ($is_pro) {
+			$active_products[] = 'IgnitionDeck Enterprise';
+		}
+		else if ($is_basic) {
+			$active_products[] = 'IgnitionDeck Basic';
+		}
+	}
+	if (idf_has_idc()) {
+		$is_idc_licensed = get_transient('is_idc_licensed');
+		$general = get_option('md_receipt_settings');
+		$general = maybe_unserialize($general);
+		$idc_license_key = (isset($general['license_key']) ? $general['license_key'] : '');
+		if (isset($_POST['idc_license_key'])) {
+			$idc_license_key = sanitize_text_field($_POST['idc_license_key']);
+			do_action('idc_license_update', $idc_license_key);
+			$is_idc_licensed = get_transient('is_idc_licensed');
+		}
+		if ($is_idc_licensed) {
+			$active_products[] = 'IgnitionDeck Commerce';
+		}
+	}
+	$type_msg = '';
+	if (!empty($active_products)) {
+		$count = count($active_products);
+		$type_msg = ' '.$active_products[0];
+		if ($count > 1) {
+			$i = 0;
+			foreach ($active_products as $product) {
+				if ($i > 0) {
+					$type_msg .= ', '.$active_products[$i];
+				}
+				$i++;
+			}
+		}
+	}
 	if (isset($_POST['commerce_submit'])) {
 		$platform = sanitize_text_field($_POST['commerce_selection']);
 		update_option('idf_commerce_platform', $platform);
@@ -83,6 +139,32 @@ function idf_theme_list() {
 	curl_close($ch);
 	$data = json_decode($json);
 	include_once 'templates/admin/_themeList.php';
+}
+
+add_action('idf_notice_checks', 'idf_notice_checks');
+
+function idf_notice_checks() {
+	if (idf_has_idc()) {
+		$idc_data = get_plugin_data(ABSPATH . 'wp-content/plugins/idcommerce/idcommerce.php');
+		if (!empty($idc_data['Version'])) {
+			$current_idc_version = $idc_data['Version'];
+			$versions = get_transient('idf_plugin_versions');
+			if (isset($versions['idcommerce/idcommerce.php'])) {
+				$new_idc_version = $versions['idcommerce/idcommerce.php'];
+				if (version_compare($current_idc_version, $new_idc_version, '<')) {
+					add_action('admin_notices', 'idf_idc_notice');
+				}
+			}
+		}
+	}
+}
+
+function idf_idc_notice() {
+	echo '<div class="updated">
+			<p>'.
+	       		__('Your IgnitionDeck Commerce installation is out of date.', 'ignitiondeck').' <a href="'.admin_url('update-core.php').'">'.__('Click here', 'ignitiondeck').'</a> '.__('to update to the latest version.', 'ignitiondeck')
+	       	.'</p>
+	    </div>';
 }
 
 add_action('admin_enqueue_scripts', 'idf_additional_enqueues');

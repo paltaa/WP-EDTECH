@@ -1,7 +1,7 @@
 <?php
-add_action('idf_key_transfer', 'idf_key_transfer');
+add_action('idf_transfer_key', 'idf_transfer_key');
 
-function idf_key_transfer() {
-	update_option('idf_key_transfer', 1);
+function idf_transfer_key() {
+	update_option('idf_transfer_key', 1);
 }
 ?>
